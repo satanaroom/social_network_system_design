@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: VK
+  description: |-
+   System Design социальной сети для курса по System Design
+servers:
+  - url: https://vk.system.design.com/api/v1
+paths:
+  /friend:
+    post:
+      tags:
+        - friend
+      summary: Add new friend
+      description: Add new friend or subscribing to updates of his events
+      operationId: addFriend
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Friend'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Friend'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Friend'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/FriendResponse'
+        '404':
+          description: Frind not found
+        '405':
+          description: Add user not allowed
+    delete:
+      tags:
+        - friend
+      summary: Delete a user or unsubscribe from updates
+      operationId: deleteFriend
+      parameters:
+        - name: friendId
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendResponse'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/FriendResponse'
+        '405':
+          description: Invalid input
+components:
+  schemas:
+    Friend:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 10
+        frindId:
+          type: integer
+          format: int64
+          example: 198772
+      xml:
+        name: friend
+    FriendResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+          example: "user 198772 added successfully"
+      xml:
+        name: friend
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: tag
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
